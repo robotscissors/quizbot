@@ -1,9 +1,10 @@
 require 'bundler'
 Bundler.require()
-
+require 'rack/env'
+use Rack::Env
 
 get '/' do
-  'Sinatra has taking the stage.'
+  'Sinatra has taking the stage. Cell:'+ENV['TWILIO_PHONE_NUMBER']
 end
 
 post '/sms' do
