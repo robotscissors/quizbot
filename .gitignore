@@ -3,6 +3,7 @@
 .env
 /.config
 /config/local_env.yml
+config/env.yml
 /coverage/
 /InstalledFiles
 /pkg/

@@ -1,10 +1,16 @@
 require 'bundler'
 Bundler.require()
-require 'rack/env'
-use Rack::Env
+require 'envyable'
+Envyable.load('./config/env.yml', 'development')
+require_relative './sms_machine.rb'
 
 get '/' do
-  'Sinatra has taking the stage. Cell:'+ENV['TWILIO_PHONE_NUMBER']
+  'Sinatra has taking the stage.'
+end
+
+get '/send' do
+  @return_info = SmsMachine.send_sms(ENV['MY_CELL_PHONE_NUMBER'],ENV['TWILIO_PHONE_NUMBER'],"This is a test of a text!")
+  puts @return_info
 end
 
 post '/sms' do
