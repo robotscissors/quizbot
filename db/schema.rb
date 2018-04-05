@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180405030353) do
+ActiveRecord::Schema.define(version: 20180405043206) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,6 +18,13 @@ ActiveRecord::Schema.define(version: 20180405030353) do
   create_table "topics", force: :cascade do |t|
     t.string "keyword"
     t.string "variation"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "number"
+    t.datetime "join_date", default: "2018-04-05 04:44:39", null: false
+    t.boolean "stop", default: false
+    t.datetime "updated_at", default: "2018-04-05 04:44:39", null: false
   end
 
 end
