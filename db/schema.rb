@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 20180407170622) do
   create_table "questions", force: :cascade do |t|
     t.string "question", null: false
     t.string "answer", null: false
+    t.string "answer_description"
     t.string "more_info"
     t.bigint "topic_id"
     t.index ["topic_id"], name: "index_questions_on_topic_id"
@@ -30,9 +31,9 @@ ActiveRecord::Schema.define(version: 20180407170622) do
 
   create_table "users", force: :cascade do |t|
     t.string "number"
-    t.datetime "join_date", default: "2018-04-07 21:36:13", null: false
+    t.datetime "join_date", default: "2018-04-08 00:48:25", null: false
     t.boolean "stop", default: false
-    t.datetime "updated_at", default: "2018-04-07 21:36:13", null: false
+    t.datetime "updated_at", default: "2018-04-08 00:48:25", null: false
   end
 
 end
