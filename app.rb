@@ -3,6 +3,7 @@ Bundler.require()
 require 'sinatra'
 require 'sinatra/activerecord'
 require './config/environments'
+require './lib/constants'
 require 'envyable'
 Envyable.load('./config/env.yml', 'development')
 require_relative './app/models/user.rb'
@@ -33,6 +34,8 @@ post '/sms' do
     @user = User.create(number: @number)
     if @user.save
       puts "save complete"
+      # Welcome user
+      SmsFactory.send_sms(@user.number,ENV['TWILIO_PHONE_NUMBER'], WELCOME)
     else
       puts "error"
     end
