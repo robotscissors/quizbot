@@ -25,20 +25,53 @@ end
 post '/sms' do
 
   @number = params['From']
-  @body = params['Body']
+  @body = params['Body'].downcase
 
-  #is a new user?
+  # Create user if not in database.
   if User.exists?(:number => @number)
-    puts "this number exists!!"
+    # Recall user
+    @user = User.where(:number => @number)
   else
     @user = User.create(number: @number)
     if @user.save
       puts "save complete"
       # Welcome user
-      SmsFactory.send_sms(@user.number,ENV['TWILIO_PHONE_NUMBER'], WELCOME)
+      SmsFactory.send_sms(@user.number, WELCOME)
     else
       puts "error"
     end
+  end
+
+  # Listen, is it a topic keyword or action word?
+
+  if @body =~ /^\w+$/
+    if Topic.pluck(:keyword).map(&:downcase).include?(@body)
+      # This is a new topic
+      # Return the first question
+      @topic_id = Topic.find_by(:keyword => @body.downcase).id
+      @first_question = Question.where(:topic_id => @topic_id).first
+      # Ask the first question
+      SmsFactory.send_sms(@number, @first_question.question)
+      # Update user journey
+    elsif ANSWER_KEYS.include?(@body)
+      # This is an answer to a question
+      @answer_to_question = ""
+      puts "Answer response"
+      SmsFactory.send_sms(@number, "ANSWER")
+    elsif ACTION_KEYS.include?(@body)
+      # This is an action
+      puts "Action response"
+      SmsFactory.send_sms(@number, "Action")
+
+    else
+      # I don't understand - send error message
+      puts "Error response"
+      SmsFactory.send_sms(@number, ERROR_RESPONSE)
+    end
+  else
+    # I don't understand - send error message
+    puts "Error response"
+    SmsFactory.send_sms(@number, ERROR_TOO_MANY_WORDS)
   end
 
   #stop automatically unsubscribes (how do we flag them in the database?)

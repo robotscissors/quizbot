@@ -4,7 +4,7 @@
 # give support to variations
 @topic1 = Topic.create(keyword: "flu", description: "Want to discover the 5 myths on dealing with the flu?")
 Question.create(
-  question: "You can catch the flu from the vaccine? (Reply T or F)",
+  question: "You can catch the flu from the vaccine. (Reply T or F)",
   answer: "F",
   answer_description: "The flu vaccine that a person receives is an inactive virus that cannot be transmitted. Those that feel symptoms were already infected.",
   more_info: "https://www.health.harvard.edu/diseases-and-conditions/10-flu-myths",
