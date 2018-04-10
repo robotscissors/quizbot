@@ -30,7 +30,14 @@ post '/sms' do
   # Create user if not in database.
   if User.exists?(:number => @number)
     # Recall user
-    @user = User.where(:number => @number)
+    @user = User.where(:number => @number).first
+    if (@body =~ /^\w+$/) && (@body === "stop")
+      #update boolean flag to stop
+      @user.update!(:stop => true)
+    elsif (@body =~ /^\w+$/) && (@body === "start")
+      #they are back so let's take the flag off
+      @user.update!(:stop => false)
+    end
   else
     @user = User.create(number: @number)
     if @user.save
@@ -43,8 +50,7 @@ post '/sms' do
   end
 
   # Listen, is it a topic keyword or action word?
-
-  if @body =~ /^\w+$/
+  if (@body =~ /^\w+$/) && (!@user.stop)
     if Topic.pluck(:keyword).map(&:downcase).include?(@body)
       # This is a new topic
       # Return the first question
@@ -62,7 +68,8 @@ post '/sms' do
       # This is an action
       puts "Action response"
       SmsFactory.send_sms(@number, "Action")
-
+    elsif @body === 'start'
+      SmsFactory.send_sms(@number, WELCOME_BACK)
     else
       # I don't understand - send error message
       puts "Error response"
@@ -71,20 +78,8 @@ post '/sms' do
   else
     # I don't understand - send error message
     puts "Error response"
-    SmsFactory.send_sms(@number, ERROR_TOO_MANY_WORDS)
+    SmsFactory.send_sms(@number, ERROR_TOO_MANY_WORDS) unless @user.stop
   end
 
-  #stop automatically unsubscribes (how do we flag them in the database?)
 
-
-  #if not a new user then create a new user
-  # @user = User.create(number: @number)
-  #
-  # if @user.save
-  #     puts 'success'
-  # else
-  #     puts 'There was a problem'
-  # end
-
-  #SmsFactory.respond_sms("What you sent me was: "+body)
 end
