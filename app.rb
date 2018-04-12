@@ -9,6 +9,7 @@ Envyable.load('./config/env.yml', 'development')
 require_relative './app/models/user.rb'
 require_relative './app/models/topic.rb'
 require_relative './app/models/question.rb'
+require_relative './app/models/quiz_relationship.rb'
 require_relative './sms_machine.rb'
 
 #include SmsMachine
