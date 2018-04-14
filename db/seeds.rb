@@ -7,7 +7,7 @@ class Q
 
     @question = Question.create(
       question: question,
-      answer: answer,
+      answer: answer.downcase,
       answer_description: answer_description,
       more_info: more_info
     )

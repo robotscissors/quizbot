@@ -64,12 +64,31 @@ post '/sms' do
       SmsFactory.send_sms(@number, @message)
       # insert user journey into
       Score.create!(user_id: @user.id, question_id: @first_question_id)
-      
+
     elsif ANSWER_KEYS.include?(@body)
-      # This is an answer to a question
-      @answer_to_question = ""
-      puts "Answer response"
-      SmsFactory.send_sms(@number, "ANSWER")
+      # Find out where the user is on the journey
+      @current_place = Score.where(:user_id => @user.id).last
+      #if point is nil that means they are answering this question (sychronous)
+      if @current_place.point === nil
+        if Question.where(:id => @current_place.question_id)[0].answer.downcase === @body
+          puts "correct"
+          # update the score table with a point
+          Score.update(@current_place.id, :point => 1)
+          @answer = "CORRECT! "
+        else
+          puts "WRONG"
+          # update the score table with zero
+          Score.update(@current_place.id, :point => 0)
+          @answer = "Sorry, that's incorrect. "
+        end
+        # This is an answer to a question
+        @answer = @answer.concat(Question.where(:id => @current_place.question_id)[0].answer_description)
+        SmsFactory.send_sms(@number, @answer)
+
+        #instructions for next question
+        SmsFactory.send_sms(@number, NEXT_QUESTION)
+
+      end
     elsif ACTION_KEYS.include?(@body)
       # This is an action
       puts "Action response"
