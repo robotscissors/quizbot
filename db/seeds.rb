@@ -59,6 +59,9 @@ Q.make(
   "https://www.npr.org/sections/health-shots/2014/10/10/354627818/32-myths-about-the-flu-vaccine-you-dont-need-to-fear",
   @topic1
 )
+
+@topic2 = Topic.create(keyword: "heart", description: "Test your knowledge about heart disease.")
+
 # Question.create(
 #   question: "Do you need a flu shot every year? (Reply T or F)",
 #   answer: "T",

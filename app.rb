@@ -26,7 +26,7 @@ end
 post '/sms' do
 
   @number = params['From']
-  @body = params['Body'].downcase
+  @body = params['Body'].downcase.rstrip
 
   # Create user if not in database.
   if User.exists?(:number => @number)
@@ -68,7 +68,13 @@ post '/sms' do
     elsif ACTION_KEYS.include?(@body)
       # This is an action
       puts "Action response"
-      SmsFactory.send_sms(@number, "Action")
+      @action_output = "\n"
+      if @body === 'list'
+        Topic.all.each do |t|
+          @action_output = @action_output.concat("Keyword: #{t.keyword.upcase}\n(#{t.description})\n")
+        end
+      end
+      SmsFactory.send_sms(@number, @action_output)
     elsif @body === 'start'
       SmsFactory.send_sms(@number, WELCOME_BACK)
     else
