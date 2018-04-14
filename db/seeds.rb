@@ -18,7 +18,7 @@ class Q
   end
 end
 
-@topic1 = Topic.create(keyword: "flu", description: "Want to discover the 5 myths on dealing with the flu?")
+@topic1 = Topic.create(keyword: "flu", description: "Discover the 5 myths on dealing with the flu")
 
 Q.make(
   "You can catch the flu from the vaccine. (Reply T or F)",

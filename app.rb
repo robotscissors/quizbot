@@ -10,6 +10,7 @@ require_relative './app/models/user.rb'
 require_relative './app/models/topic.rb'
 require_relative './app/models/question.rb'
 require_relative './app/models/quiz_relationship.rb'
+require_relative './app/models/score.rb'
 require_relative './sms_machine.rb'
 
 #include SmsMachine
@@ -55,11 +56,15 @@ post '/sms' do
     if Topic.pluck(:keyword).map(&:downcase).include?(@body)
       # This is a new topic
       # Return the first question
-      @topic_id = Topic.find_by(:keyword => @body.downcase).id
-      @first_question = Question.where(:topic_id => @topic_id).first
+      @topic = Topic.find_by(:keyword => @body.downcase)
+      @first_question_id = QuizRelationship.where(:topic_id => @topic.id).first.question_id
       # Ask the first question
-      SmsFactory.send_sms(@number, @first_question.question)
-      # Update user journey
+      @question_string = Question.where(:id => @first_question_id)[0].question
+      @message = "#{@topic.description} Your first question: #{@question_string}"
+      SmsFactory.send_sms(@number, @message)
+      # insert user journey into
+      Score.create!(user_id: @user.id, question_id: @first_question_id)
+      
     elsif ANSWER_KEYS.include?(@body)
       # This is an answer to a question
       @answer_to_question = ""
