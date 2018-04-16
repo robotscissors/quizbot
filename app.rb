@@ -9,7 +9,6 @@ Envyable.load('./config/env.yml', 'development')
 require_relative './app/models/user.rb'
 require_relative './app/models/topic.rb'
 require_relative './app/models/question.rb'
-require_relative './app/models/quiz_relationship.rb'
 require_relative './app/models/score.rb'
 require_relative './sms_machine.rb'
 
@@ -50,6 +49,7 @@ post '/sms' do
       puts "error"
     end
   end
+# ---------------------------------------------------
 
   # Listen, is it a topic keyword or action word?
   if (@body =~ /^\w+$/) && (!@user.stop)
@@ -57,9 +57,9 @@ post '/sms' do
       # This is a new topic
       # Return the first question
       @topic = Topic.find_by(:keyword => @body.downcase)
-      @first_question_id = QuizRelationship.where(:topic_id => @topic.id).first.question_id
+      @first_question_id = Question.where(:topic_id => @topic.id).first.id
       # Ask the first question
-      @question_string = Question.where(:id => @first_question_id)[0].question
+      @question_string = Question.where(:id => @first_question_id)[0].detail
       @message = "#{@topic.description} Your first question: #{@question_string}"
       SmsFactory.send_sms(@number, @message)
       # insert user journey into
@@ -68,16 +68,16 @@ post '/sms' do
     elsif ANSWER_KEYS.include?(@body)
       # Find out where the user is on the journey
       @current_place = Score.where(:user_id => @user.id).last
+      puts "Answer to current question: #{@current_place.question_id}"
       #if point is nil that means they are answering this question (sychronous)
       if @current_place.point === nil
+        puts "The question is: #{Question.where(:id => @current_place.question_id)[0].detail}"
         if Question.where(:id => @current_place.question_id)[0].answer.downcase === @body
-          puts "correct"
-          # update the score table with a point
+          # correct: update the score table with a point
           Score.update(@current_place.id, :point => 1)
           @answer = "CORRECT! "
         else
-          puts "WRONG"
-          # update the score table with zero
+          # wrong: update the score table with zero
           Score.update(@current_place.id, :point => 0)
           @answer = "Sorry, that's incorrect. "
         end
@@ -91,26 +91,56 @@ post '/sms' do
       end
     elsif ACTION_KEYS.include?(@body)
       # This is an action
-      puts "Action response"
       @action_output = "\n"
-      if @body === 'list'
+      case @body
+      when "n" # NEXT_QUESTION
+        puts "NEXT QUESTION"
+        @current_place = Score.where(:user_id => @user.id).last
+        puts "Current Place: #{@current_place}"
+        @current_question_id = @current_place.question_id
+        puts "Current Question_id: #{@current_question_id}"
+        @current_topic = Question.where(:id => @current_question_id)[0].topic_id
+        puts "Current_topic ID: #{@current_topic}"
+        @question_array = Question.where(:topic_id => @current_topic)
+        puts "Question array: #{@question_array.length}"
+        # how big is the array
+        @questions_total = @question_array.length
+        puts "There are #{@questions_total} in this Topic"
+        # where are you in the array
+        @array_position = @question_array.index(@question_array.find { |x| x.id === @current_question_id})
+        puts "******You are currently at Question #{@array_position}"
+        # advance one question
+        @array_position += 1
+
+        if @array_position <= @questions_total-1 # did they finish this category
+          # update score database
+          Score.create!(user_id: @user.id, question_id: @question_array[@array_position].id)
+
+          # ask the question
+          @question_string = Question.where(:id => @array_position+1)[0].detail
+          @action_output = "Your next question: #{@question_string}"
+
+        else # send them their score and move on
+        # if that was the last question then give them a list of commands
+        @action_output = "you're done!"
+        end
+
+      when 'list'
         Topic.all.each do |t|
           @action_output = @action_output.concat("Keyword: #{t.keyword.upcase}\n(#{t.description})\n")
         end
+      when 'start'
+        @action_output =  WELCOME_BACK
+      else
+        # Error: I don't understand - send error message
+        @action_output = ERROR_RESPONSE
       end
       SmsFactory.send_sms(@number, @action_output)
-    elsif @body === 'start'
-      SmsFactory.send_sms(@number, WELCOME_BACK)
-    else
-      # I don't understand - send error message
-      puts "Error response"
-      SmsFactory.send_sms(@number, ERROR_RESPONSE)
-    end
+
   else
-    # I don't understand - send error message
-    puts "Error response"
+    # Error: Too many words - I don't understand
     SmsFactory.send_sms(@number, ERROR_TOO_MANY_WORDS) unless @user.stop
   end
-
+end
 
 end

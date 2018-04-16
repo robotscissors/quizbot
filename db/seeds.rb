@@ -5,16 +5,18 @@
 class Q
   def self.make(question,answer,answer_description,more_info,topic)
 
+    puts "topic: #{topic}"
     @question = Question.create(
-      question: question,
+      detail: question,
       answer: answer.downcase,
       answer_description: answer_description,
-      more_info: more_info
+      more_info: more_info,
+      topic_id: topic
     )
-    @relationship = QuizRelationship.create(
-      topic_id: topic.id,
-      question_id: @question.id
-    )
+    # @relationship = QuizRelationship.create(
+    #   topic_id: topic.id,
+    #   question_id: @question.id
+    # )
   end
 end
 
@@ -25,7 +27,7 @@ Q.make(
   "F",
   "The flu vaccine that a person receives is an inactive virus that cannot be transmitted. Those that feel symptoms were already infected.",
   "https://www.health.harvard.edu/diseases-and-conditions/10-flu-myths",
-  @topic1
+  @topic1.id
 )
 
 Q.make(
@@ -33,7 +35,7 @@ Q.make(
   "T",
   "Flu viruses adapt quickly so the CDC recommends getting a flu vaccine yearly as the virus changes.",
   "https://www.cdc.gov/flu/about/qa/misconceptions.htm",
-  @topic1
+  @topic1.id
 )
 
 Q.make(
@@ -41,7 +43,7 @@ Q.make(
   "F",
   "That is a myth pregnant woman should get the shot and in many cases the benefit will help the baby in the first months of his or her life.",
   "http://www.health.com/health/gallery/0,,20861838,00.html#pregnant-women-can-t-get-a-flu-shot-0",
-  @topic1
+  @topic1.id
 )
 
 Q.make(
@@ -49,7 +51,7 @@ Q.make(
   "F",
   "Washing your hands with warm soapy water is important, but it won't stop the flu. Influenza is spread through the air. More specifically, through saliva droplets from someone who is infected.",
   "http://www.health.com/health/gallery/0,,20861838,00.html#you-can-stop-the-flu-by-washing-your-hands-a-lot-0",
-  @topic1
+  @topic1.id
 )
 
 Q.make(
@@ -57,7 +59,7 @@ Q.make(
   "F",
   "Actually the opposite. The vaccine stimulates the production of antibodies and strengthens the immune system.",
   "https://www.npr.org/sections/health-shots/2014/10/10/354627818/32-myths-about-the-flu-vaccine-you-dont-need-to-fear",
-  @topic1
+  @topic1.id
 )
 
 @topic2 = Topic.create(keyword: "heart", description: "Test your knowledge about heart disease.")
