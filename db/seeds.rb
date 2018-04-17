@@ -5,7 +5,6 @@
 class Q
   def self.make(question,answer,answer_description,more_info,topic)
 
-    puts "topic: #{topic}"
     @question = Question.create(
       detail: question,
       answer: answer.downcase,
@@ -13,10 +12,7 @@ class Q
       more_info: more_info,
       topic_id: topic
     )
-    # @relationship = QuizRelationship.create(
-    #   topic_id: topic.id,
-    #   question_id: @question.id
-    # )
+
   end
 end
 

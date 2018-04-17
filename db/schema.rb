@@ -39,9 +39,9 @@ ActiveRecord::Schema.define(version: 20180411001814) do
 
   create_table "users", force: :cascade do |t|
     t.string "number"
-    t.datetime "join_date", default: "2018-04-16 01:17:09", null: false
+    t.datetime "join_date", default: "2018-04-17 03:53:36", null: false
     t.boolean "stop", default: false
-    t.datetime "updated_at", default: "2018-04-16 01:17:09", null: false
+    t.datetime "updated_at", default: "2018-04-17 03:53:36", null: false
   end
 
   add_foreign_key "questions", "topics"

@@ -11,6 +11,8 @@ require_relative './app/models/topic.rb'
 require_relative './app/models/question.rb'
 require_relative './app/models/score.rb'
 require_relative './sms_machine.rb'
+require_relative './calculations.rb'
+require_relative './administration.rb'
 
 #include SmsMachine
 
@@ -26,7 +28,7 @@ end
 post '/sms' do
 
   @number = params['From']
-  @body = params['Body'].downcase.rstrip
+  @body = params['Body'].downcase.rstrip.lstrip
 
   # Create user if not in database.
   if User.exists?(:number => @number)
@@ -57,10 +59,15 @@ post '/sms' do
       # This is a new topic
       # Return the first question
       @topic = Topic.find_by(:keyword => @body.downcase)
+      #perform cleanup if necessary
+      Administration.clean_up_old_attempts(@user,@topic)
+
       @first_question_id = Question.where(:topic_id => @topic.id).first.id
       # Ask the first question
       @question_string = Question.where(:id => @first_question_id)[0].detail
       @message = "#{@topic.description} Your first question: #{@question_string}"
+
+
       SmsFactory.send_sms(@number, @message)
       # insert user journey into
       Score.create!(user_id: @user.id, question_id: @first_question_id)
@@ -68,6 +75,7 @@ post '/sms' do
     elsif ANSWER_KEYS.include?(@body)
       # Find out where the user is on the journey
       @current_place = Score.where(:user_id => @user.id).last
+      @current_topic = Question.where(:id => @current_place.question_id)
       puts "Answer to current question: #{@current_place.question_id}"
       #if point is nil that means they are answering this question (sychronous)
       if @current_place.point === nil
@@ -84,51 +92,45 @@ post '/sms' do
         # This is an answer to a question
         @answer = @answer.concat(Question.where(:id => @current_place.question_id)[0].answer_description)
         SmsFactory.send_sms(@number, @answer)
-
         #instructions for next question
-        SmsFactory.send_sms(@number, NEXT_QUESTION)
-
+        if Calculations.next_question(@user)
+          @next_instruction = NEXT_QUESTION
+        else
+          @next_instruction = "You did it! #{Calculations.quiz_score(@user, @current_topic[0])}"
+          @next_instruction = @next_instruction.concat(Calculations.overall_score(@user))
+          @next_instruction = @next_instruction.concat("To see a list of quizzes reply with the keyword LIST.")
+        end
+        SmsFactory.send_sms(@number, @next_instruction)
       end
     elsif ACTION_KEYS.include?(@body)
       # This is an action
       @action_output = "\n"
       case @body
       when "n" # NEXT_QUESTION
-        puts "NEXT QUESTION"
         @current_place = Score.where(:user_id => @user.id).last
-        puts "Current Place: #{@current_place}"
         @current_question_id = @current_place.question_id
-        puts "Current Question_id: #{@current_question_id}"
         @current_topic = Question.where(:id => @current_question_id)[0].topic_id
-        puts "Current_topic ID: #{@current_topic}"
         @question_array = Question.where(:topic_id => @current_topic)
-        puts "Question array: #{@question_array.length}"
         # how big is the array
         @questions_total = @question_array.length
-        puts "There are #{@questions_total} in this Topic"
         # where are you in the array
         @array_position = @question_array.index(@question_array.find { |x| x.id === @current_question_id})
-        puts "******You are currently at Question #{@array_position}"
         # advance one question
         @array_position += 1
-
         if @array_position <= @questions_total-1 # did they finish this category
-          # update score database
+          # update score database to advance to the next question
           Score.create!(user_id: @user.id, question_id: @question_array[@array_position].id)
-
           # ask the question
           @question_string = Question.where(:id => @array_position+1)[0].detail
           @action_output = "Your next question: #{@question_string}"
-
-        else # send them their score and move on
-        # if that was the last question then give them a list of commands
-        @action_output = "you're done!"
         end
 
       when 'list'
         Topic.all.each do |t|
           @action_output = @action_output.concat("Keyword: #{t.keyword.upcase}\n(#{t.description})\n")
         end
+      when 'score'
+        @action_output = @action_output.concat(Calculations.overall_score(@user))
       when 'start'
         @action_output =  WELCOME_BACK
       else
