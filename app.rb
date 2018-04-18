@@ -14,15 +14,9 @@ require_relative './sms_machine.rb'
 require_relative './calculations.rb'
 require_relative './administration.rb'
 
-#include SmsMachine
-
 get '/' do
   'Sinatra has taken the stage.'
 
-end
-
-get '/send' do
-  SmsFactory.send_sms(ENV['MY_CELL_PHONE_NUMBER'],ENV['TWILIO_PHONE_NUMBER'],"This is a test of a text!")
 end
 
 post '/sms' do
@@ -44,32 +38,26 @@ post '/sms' do
   else
     @user = User.create(number: @number)
     if @user.save
-      puts "save complete"
-      # Welcome user
+      # Welcome user - save complete
       SmsFactory.send_sms(@user.number, WELCOME)
     else
-      puts "error"
+      puts "Error saving"
     end
   end
 # ---------------------------------------------------
-
   # Listen, is it a topic keyword or action word?
   if (@body =~ /^\w+$/) && (!@user.stop)
     if Topic.pluck(:keyword).map(&:downcase).include?(@body)
-      # This is a new topic
       # Return the first question
       @topic = Topic.find_by(:keyword => @body.downcase)
       #perform cleanup if necessary
       Administration.clean_up_old_attempts(@user,@topic)
-
       @first_question_id = Question.where(:topic_id => @topic.id).first.id
       # Ask the first question
-      @question_string = Question.where(:id => @first_question_id)[0].detail
+      @question_string = Administration.get_question(@first_question_id)
       @message = "#{@topic.description} Your first question: #{@question_string}"
-
-
       SmsFactory.send_sms(@number, @message)
-      # insert user journey into
+      # insert user journey into the score table (point = nil by default)
       Score.create!(user_id: @user.id, question_id: @first_question_id)
 
     elsif ANSWER_KEYS.include?(@body)
@@ -79,7 +67,6 @@ post '/sms' do
       puts "Answer to current question: #{@current_place.question_id}"
       #if point is nil that means they are answering this question (sychronous)
       if @current_place.point === nil
-        puts "The question is: #{Question.where(:id => @current_place.question_id)[0].detail}"
         if Question.where(:id => @current_place.question_id)[0].answer.downcase === @body
           # correct: update the score table with a point
           Score.update(@current_place.id, :point => 1)
@@ -94,7 +81,11 @@ post '/sms' do
         SmsFactory.send_sms(@number, @answer)
         #instructions for next question
         if Calculations.next_question(@user)
-          @next_instruction = NEXT_QUESTION
+          # is there more information?
+          @next_instruction = ""
+          @more_info = Question.where(:id => @current_place.question_id)[0].more_info
+          @next_instruction = "Want more information: #{@more_info}. " if @more_info
+          @next_instruction = @next_instruction.concat(NEXT_QUESTION)
         else
           @next_instruction = "You did it! #{Calculations.quiz_score(@user, @current_topic[0])}"
           @next_instruction = @next_instruction.concat(Calculations.overall_score(@user))
@@ -121,10 +112,9 @@ post '/sms' do
           # update score database to advance to the next question
           Score.create!(user_id: @user.id, question_id: @question_array[@array_position].id)
           # ask the question
-          @question_string = Question.where(:id => @array_position+1)[0].detail
+          @question_string = Administration.get_question(@array_position+1)
           @action_output = "Your next question: #{@question_string}"
         end
-
       when 'list'
         Topic.all.each do |t|
           @action_output = @action_output.concat("Keyword: #{t.keyword.upcase}\n(#{t.description})\n")
@@ -133,16 +123,20 @@ post '/sms' do
         @action_output = @action_output.concat(Calculations.overall_score(@user))
       when 'start'
         @action_output =  WELCOME_BACK
+      when 'repeat'
+        @current_place = Score.where(:user_id => @user.id).last
+        @current_question_id = @current_place.question_id
+        @question_string = Question.where(:id => @current_question_id)[0].detail
+        @action_output = "The question is: #{@question_string}"
       else
         # Error: I don't understand - send error message
         @action_output = ERROR_RESPONSE
       end
       SmsFactory.send_sms(@number, @action_output)
 
-  else
-    # Error: Too many words - I don't understand
-    SmsFactory.send_sms(@number, ERROR_TOO_MANY_WORDS) unless @user.stop
+    else
+      # Error: Too many words - I don't understand
+      SmsFactory.send_sms(@number, ERROR_TOO_MANY_WORDS) unless @user.stop
+    end
   end
-end
-
 end
