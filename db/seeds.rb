@@ -60,27 +60,34 @@ Q.make(
 
 @topic2 = Topic.create(keyword: "heart", description: "Test your knowledge about heart disease.")
 
-# Question.create(
-#   question: "Do you need a flu shot every year? (Reply T or F)",
-#   answer: "T",
-#   answer_description: "Flu viruses adapt quickly so the CDC recommends getting a flu vaccine yearly as the virus changes.",
-#   more_info: "https://www.cdc.gov/flu/about/qa/misconceptions.htm",
-#   topic_id: @topic1.id)
-# Question.create(
-#   question: "Pregnant woman should not get the flu shot? (Reply T or F)",
-#   answer: "F",
-#   answer_description: "That is a myth pregnant woman should get the shot and in many cases the benefit will help the baby in the first months of his or her life.",
-#   more_info: "http://www.health.com/health/gallery/0,,20861838,00.html#pregnant-women-can-t-get-a-flu-shot-0",
-#   topic_id: @topic1.id)
-# Question.create(
-#   question: "You can keep the flu away by frequently washing your hands? (Reply T or F)",
-#   answer: "F",
-#   answer_description: "Washing your hands with warm soapy water is important, but it won't stop the flu. Influenza is spread through the air. More specifically, through saliva droplets from someone who is infected.",
-#   more_info: "http://www.health.com/health/gallery/0,,20861838,00.html#you-can-stop-the-flu-by-washing-your-hands-a-lot-0",
-#   topic_id: @topic1.id)
-# Question.create(
-#   question: "Does the flu vaccine weaken your body's immune response? (Reply T or F)",
-#   answer: "F",
-#   answer_description: "Actually the opposite. The vaccine stimulates the production of antibodies and strengthens the immune system.",
-#   more_info: "https://www.npr.org/sections/health-shots/2014/10/10/354627818/32-myths-about-the-flu-vaccine-you-dont-need-to-fear",
-#   topic_id: @topic1.id)
+Q.make(
+  "Most Heart Attacks happen on a Monday. (Reply T or F)",
+  "T",
+  "Time of day, day of the week including the time of the year can have influences in cardiovascular wellness.",
+  "http://circres.ahajournals.org/content/106/3/430",
+  @topic2.id
+)
+
+Q.make(
+  "You can die from a Broken Heart. (Reply T or F)",
+  "T",
+  "Broken heart syndrome is a real condition. It is a social condition that can affect your health.",
+  "https://www.healthline.com/health-news/can-you-die-of-broken-heart#1",
+  @topic2.id
+)
+
+Q.make(
+  "In the U.S., someone suffers from a heart attack every 10 minutes. (Reply T or F)",
+  "F",
+  "According to the CDC, someone suffers from a heart attack every 40 seconds!",
+  "https://www.cdc.gov/dhdsp/data_statistics/fact_sheets/fs_heart_disease.htm",
+  @topic2.id
+)
+
+Q.make(
+  "The most common day to have a heart attack is on Christmas day. (Reply T or F)",
+  "T",
+  "Cardiac deaths peak during this season and is most likely due to stress and overindulgences.",
+  "http://circ.ahajournals.org/content/110/25/3744",
+  @topic2.id
+)

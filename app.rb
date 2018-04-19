@@ -24,26 +24,8 @@ post '/sms' do
   @number = params['From']
   @body = params['Body'].downcase.rstrip.lstrip
 
-  # Create user if not in database.
-  if User.exists?(:number => @number)
-    # Recall user
-    @user = User.where(:number => @number).first
-    if (@body =~ /^\w+$/) && (@body === "stop")
-      #update boolean flag to stop
-      @user.update!(:stop => true)
-    elsif (@body =~ /^\w+$/) && (@body === "start")
-      #they are back so let's take the flag off
-      @user.update!(:stop => false)
-    end
-  else
-    @user = User.create(number: @number)
-    if @user.save
-      # Welcome user - save complete
-      SmsFactory.send_sms(@user.number, WELCOME)
-    else
-      puts "Error saving"
-    end
-  end
+  @user = User.check_if_user_new(@number,@body)
+
 # ---------------------------------------------------
   # Listen, is it a topic keyword or action word?
   if (@body =~ /^\w+$/) && (!@user.stop)
