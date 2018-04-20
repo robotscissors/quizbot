@@ -23,16 +23,16 @@ post '/sms' do
 
   @number = params['From']
   @body = params['Body'].downcase.rstrip.lstrip
-
   @user = User.check_if_user_new(@number,@body)
 
 # ---------------------------------------------------
   # Listen, is it a topic keyword or action word?
+  puts "what is user.stop #{@user.stop} and body is :#{@body}"
   if (@body =~ /^\w+$/) && (!@user.stop)
     if Topic.pluck(:keyword).map(&:downcase).include?(@body)
       # Return the first question
       @topic = Topic.find_by(:keyword => @body.downcase)
-      #perform cleanup if necessary
+      #perform cleanup if necessary erase any previous topic attempts
       Administration.clean_up_old_attempts(@user,@topic)
       @first_question_id = Question.where(:topic_id => @topic.id).first.id
       # Ask the first question
@@ -74,29 +74,15 @@ post '/sms' do
           @next_instruction = @next_instruction.concat("To see a list of quizzes reply with the keyword LIST.")
         end
         SmsFactory.send_sms(@number, @next_instruction)
+      else
+        # Hmmm I think you answered the question wrong.
       end
     elsif ACTION_KEYS.include?(@body)
       # This is an action
       @action_output = "\n"
       case @body
       when "n" # NEXT_QUESTION
-        @current_place = Score.where(:user_id => @user.id).last
-        @current_question_id = @current_place.question_id
-        @current_topic = Question.where(:id => @current_question_id)[0].topic_id
-        @question_array = Question.where(:topic_id => @current_topic)
-        # how big is the array
-        @questions_total = @question_array.length
-        # where are you in the array
-        @array_position = @question_array.index(@question_array.find { |x| x.id === @current_question_id})
-        # advance one question
-        @array_position += 1
-        if @array_position <= @questions_total-1 # did they finish this category
-          # update score database to advance to the next question
-          Score.create!(user_id: @user.id, question_id: @question_array[@array_position].id)
-          # ask the question
-          @question_string = Administration.get_question(@array_position+1)
-          @action_output = "Your next question: #{@question_string}"
-        end
+        @action_output = Administration.next_question(@user)
       when 'list'
         Topic.all.each do |t|
           @action_output = @action_output.concat("Keyword: #{t.keyword.upcase}\n(#{t.description})\n")
@@ -107,15 +93,18 @@ post '/sms' do
         @action_output =  WELCOME_BACK
       when 'repeat'
         @current_place = Score.where(:user_id => @user.id).last
-        @current_question_id = @current_place.question_id
-        @question_string = Question.where(:id => @current_question_id)[0].detail
-        @action_output = "The question is: #{@question_string}"
+        if @current_place.point === nil
+          @current_question_id = @current_place.question_id
+          @question_string = Question.where(:id => @current_question_id)[0].detail
+          @action_output = "The question is: #{@question_string}"
+        else #they had already finished a question.
+            @action_output = Administration.next_question(@user)
+        end
       else
         # Error: I don't understand - send error message
         @action_output = ERROR_RESPONSE
       end
       SmsFactory.send_sms(@number, @action_output)
-
     else
       # Error: Too many words - I don't understand
       SmsFactory.send_sms(@number, ERROR_TOO_MANY_WORDS) unless @user.stop

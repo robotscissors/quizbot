@@ -4,7 +4,7 @@ class Calculations
     @current_place = Score.where(:user_id => user.id).last
     @points = Score.where(:user_id => user.id).sum(:point)
     @possible_points = Score.where(:user_id => user.id).count
-    @percent_correct = (@points.to_f / @possible_points.to_f)*100.00
+    @percent_correct = (@points.to_f / @possible_points.to_f)*100.00.round(2)
     "Your score is: #{@points} out of #{@possible_points}. That's #{@percent_correct}% correct! "
   end
 
@@ -28,7 +28,8 @@ class Calculations
     @array_position = @question_array.index(@question_array.find { |x| x.id === @current_question_id})
     # advance one question
     @array_position += 1
-    return true if @array_position <= @questions_total-1# did they finish this category
+    return true if @array_position <= @questions_total-1 # did they finish this category
     false
   end
+
 end
