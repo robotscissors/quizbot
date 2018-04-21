@@ -1,6 +1,8 @@
 WELCOME = "Thank you for joining MediFacts quiz bot. "+
   "All questions require True (reply T) or False (reply F) answers. "+
   "So give it a try!"
+NEW_USER_HELP = "You are new! To get started reply with the word "+
+  "LIST and that will give you keywords that will start quizzes. "
 WELCOME_BACK = "You're back! Excellent. To pick up where you "+
   "left off, just reply with REPEAT. If you want to see a list "+
   "of quizzes, just reply LIST."
@@ -12,3 +14,5 @@ ERROR_TOO_MANY_WORDS = "Hmmm. It looks like your response has too many words or 
   "Try limiting your response to T or F. Or reply with REPEAT to repeat the last question."
 ACTION_KEYS = ['score','list','ready','repeat','n','start']
 ANSWER_KEYS = ["t","f","true","false"]
+CORRECT_ANSWER = "Correct! "
+WRONG_ANSWER = "Sorry! That's incorrect. "
