@@ -35,7 +35,7 @@ post '/sms' do
       @first_question_id = Question.get_first_id(@topic)
       # Ask the first question
       @question_string = Question.get_question(@first_question_id)
-      @message = "#{@topic.description} Your first question: #{@question_string}"
+      @message = "#{@topic.description}. Your first question: #{@question_string}"
       SmsFactory.send_sms(@number, @message)
       # insert user journey into the score table (point = nil by default)
       Score.create!(user_id: @user.id, question_id: @first_question_id)
