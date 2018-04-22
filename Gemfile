@@ -8,7 +8,7 @@ gem 'sinatra-activerecord'
 gem 'pg'
 gem 'twilio-ruby', '~> 4.11', '>= 4.11.1'
 gem 'envyable', '~> 1.2'
-
+gem 'rake', '~> 0.9'
 
 group :development do
   gem 'rspec', '~> 3.5'
