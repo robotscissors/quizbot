@@ -5,7 +5,4 @@ class Administration
     @array_of_items = Question.select(:id).where(:topic_id => topic.id)
     Score.where(:question_id => @array_of_items, :user_id => user.id).destroy_all
   end
-
-  
-
 end

@@ -16,15 +16,12 @@ require_relative './input_validator.rb'
 
 get '/' do
   'QuizBot is on center stage with Sinatra.'
-
 end
 
 post '/sms' do
-
   @number = params['From']
   @body = params['Body'].downcase.rstrip.lstrip
   @user = User.check_if_user_new(@number,@body)
-
 # ---------------------------------------------------
   # Listen, is it a topic keyword or action word?
   if (InputValidator.is_single_word?(@body)) && (!@user.stop)
@@ -90,15 +87,20 @@ post '/sms' do
           @action_output = Question.repeat_question(@user)
         end
       when 'list'
-        Topic.all.each do |t|
-          @action_output = @action_output.concat("Keyword: #{t.keyword.upcase}\n(#{t.description})\n")
-        end
+        # Topic.all.each do |t|
+        #   @action_output = @action_output.concat("Keyword: #{t.keyword.upcase}\n(#{t.description})\n")
+        # end
+        @action_output = Topic.get_list_of_topics
       when 'score'
         @action_output = @action_output.concat(Score.overall_score(@user))
       when 'start'
         @action_output =  WELCOME_BACK
       when 'repeat'
-        @action_output = Question.repeat_question(@user)
+        if Question.is_there_a_next_question?(@user)
+          @action_output = Question.repeat_question(@user)
+        else
+          @action_output = "#{NO_NEXT_QUESTION}s #{Topic.get_list_of_topics}"
+        end
       else
         # Error: I don't understand - send error message
         @action_output = ERROR_RESPONSE

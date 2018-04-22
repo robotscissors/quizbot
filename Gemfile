@@ -12,6 +12,4 @@ gem 'envyable', '~> 1.2'
 
 group :development do
   gem 'rspec', '~> 3.5'
-  #gem 'ngrok', '~> 1.6', '>= 1.6.1'
-  #gem 'sqlite3'
 end

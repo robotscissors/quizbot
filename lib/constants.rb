@@ -12,6 +12,8 @@ ERROR_RESPONSE = "Hmmm. I don't recognize that response. Text REPEAT to repeat t
   "question, SCORE to get your score or LIST for listing of keywords and quizzes."
 ERROR_TOO_MANY_WORDS = "Hmmm. It looks like your response has too many words or a word I don't recognize. "+
   "Try limiting your response to T or F. Or reply with REPEAT to repeat the last question."
+NO_NEXT_QUESTION = "It looks like you finsihed the last quiz or haven't started one yet. "+
+  "Choose from the following: "
 ACTION_KEYS = ['score','list','ready','repeat','n','start']
 ANSWER_KEYS = ["t","f","true","false"]
 CORRECT_ANSWER = "Correct! "
