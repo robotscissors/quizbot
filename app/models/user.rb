@@ -9,11 +9,9 @@ class User < ActiveRecord::Base
       @user = User.where(:number => @number).first
       if (@body =~ /^\w+$/) && (@body === "stop")
         #update boolean flag to stop so no one contacts subscriber
-        puts "we stopped"
         @user.update!(:stop => true)
       elsif (@body =~ /^\w+$/) && (@body === "start")
         #they are back so let's take the flag off so we can contact them
-        puts "we started"
         @user.update!(:stop => false)
 
       end

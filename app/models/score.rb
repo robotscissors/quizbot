@@ -13,7 +13,7 @@ class Score < ActiveRecord::Base
 
   def self.quiz_score(user,topic)
     @current_place = Score.current_place(user.id)
-    @array_of_items = Question.select(:id).where(:topic_id => topic.topic_id)
+    @array_of_items = Question.select(:id).where(:topic_id => topic.id)
     @points = Score.where(:user_id => user.id, :question_id => @array_of_items).sum(:point)
     "You got #{@points}/#{@array_of_items.length} on this quiz. "
   end
@@ -23,7 +23,7 @@ class Score < ActiveRecord::Base
   end
 
   def self.played_before?(user_id)
-      return true if Score.all.count > 0
+      return true if Score.where(:user_id => user_id).count > 0
       false
   end
 end
