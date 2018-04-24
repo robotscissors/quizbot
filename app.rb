@@ -109,7 +109,7 @@ post '/sms' do
     else
       # Let's check to see if they are a new user maybe they need help
       # getting started
-      if Score.played_before?(@user_id)
+      if Score.played_before?(@user.id)
         # Error: Too many words - I don't understand
         SmsFactory.send_sms(@number, ERROR_TOO_MANY_WORDS) unless @user.stop
       else
