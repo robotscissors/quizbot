@@ -43,7 +43,7 @@ post '/sms' do
     elsif ANSWER_KEYS.include?(@body)
       # Find out where the user is on the journey
       @current_place = Score.current_place(@user.id)
-      @current_topic = Question.where(:id => @current_place.question_id)
+      @current_topic_id = Question.where(:id => @current_place.question_id)[0].topic_id
       #if point is nil that means they are answering this question (sychronous)
       if @current_place.point === nil
         if Question.get_answer(@current_place) === @body
@@ -68,7 +68,7 @@ post '/sms' do
           @next_instruction = "Want more information: #{@more_info}. " if @more_info
           @next_instruction = @next_instruction.concat(NEXT_QUESTION)
         else
-          @next_instruction = "You did it! #{Score.quiz_score(@user, @current_topic[0])}"
+          @next_instruction = "You did it! #{Score.quiz_score(@user, @current_topic_id)}"
           @next_instruction = @next_instruction.concat(Score.overall_score(@user))
           @next_instruction = @next_instruction.concat("To see a list of quizzes reply with the keyword LIST.")
         end

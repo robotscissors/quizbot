@@ -11,9 +11,9 @@ class Score < ActiveRecord::Base
     "Your total score for all quizzes is: #{@points} out of #{@possible_points}. That's #{@percent_correct}% correct! "
   end
 
-  def self.quiz_score(user,topic)
+  def self.quiz_score(user,topic_id)
     @current_place = Score.current_place(user.id)
-    @array_of_items = Question.select(:id).where(:topic_id => topic.id)
+    @array_of_items = Question.select(:id).where(:topic_id => topic_id)
     @points = Score.where(:user_id => user.id, :question_id => @array_of_items).sum(:point)
     "You got #{@points}/#{@array_of_items.length} on this quiz. "
   end

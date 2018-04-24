@@ -12,6 +12,8 @@ config/env.yml
 /test/tmp/
 /test/version_tmp/
 /tmp/
+ngrok
+
 
 ## Specific to RubyMotion:
 .dat*
