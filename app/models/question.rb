@@ -43,6 +43,7 @@ class Question < ActiveRecord::Base
 
   def self.next_question(user)
     @user = user
+    return "Oops, looks like you need to pick a new quiz. You finished the last question. Reply with LIST to get a listing of other quizzes. " unless Question.is_there_a_next_question?(user)
     @current_place = Score.where(:user_id => @user.id).last
     @current_question_id = @current_place.question_id
     @current_topic = Question.where(:id => @current_question_id)[0].topic_id
