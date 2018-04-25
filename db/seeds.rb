@@ -5,7 +5,7 @@
 
 @topic1 = Topic.create(
             keyword: "flu", #keywords in lowercase
-            description: "Discover the 5 myths on dealing with the flu"
+            description: "Discover the 5 myths on dealing with the flu."
           )
 
 Question.create(
