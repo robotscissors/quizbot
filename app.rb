@@ -87,9 +87,6 @@ post '/sms' do
           @action_output = Question.repeat_question(@user)
         end
       when 'list'
-        # Topic.all.each do |t|
-        #   @action_output = @action_output.concat("Keyword: #{t.keyword.upcase}\n(#{t.description})\n")
-        # end
         @action_output = Topic.get_list_of_topics
       when 'score'
         @action_output = @action_output.concat(Score.overall_score(@user))
@@ -99,7 +96,7 @@ post '/sms' do
         if Question.is_there_a_next_question?(@user)
           @action_output = Question.repeat_question(@user)
         else
-          @action_output = "#{NO_NEXT_QUESTION}s #{Topic.get_list_of_topics}"
+          @action_output = "#{NO_NEXT_QUESTION} #{Topic.get_list_of_topics}"
         end
       else
         # Error: I don't understand - send error message
