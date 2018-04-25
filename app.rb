@@ -80,7 +80,7 @@ post '/sms' do
       # This is an action
       @action_output = "\n"
       case @body
-      when "n" # NEXT_QUESTION
+      when "y" # NEXT_QUESTION
         if Score.where(:user_id => @user.id).last.point != nil
           @action_output = Question.next_question(@user)
         else
