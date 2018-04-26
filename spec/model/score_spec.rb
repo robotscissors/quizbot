@@ -9,6 +9,13 @@ require 'rack/test'
 describe 'Score' do
   include Rack::Test::Methods
 
+  before(:each) do
+    topic = Topic.create(
+            keyword: "flu", #keywords in lowercase
+            description: "Discover the 5 myths on dealing with the flu."
+          )
+  end
+    
   def app
     Sinatra::Application
   end
