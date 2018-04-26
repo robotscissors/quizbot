@@ -68,3 +68,9 @@ jobs: # a collection of steps
       # Save test results for timing analysis
       - store_test_results:
           path: test_results
+
+      deployment:
+        production:
+          branch: master
+          heroku:
+            appname: quizbot-demo
