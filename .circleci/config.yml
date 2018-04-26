@@ -2,7 +2,7 @@ version: 2 # use CircleCI 2.0
 jobs: # a collection of steps
   build: # runs not using Workflows must have a `build` job as entry point
     parallelism: 3 # run three instances of this job in parallel
-    working_directory: ~/circleci-demo-ruby-rails # directory where steps will run
+    working_directory: ~/quizbot # directory where steps will run
     docker: # run the steps with Docker
       - image: circleci/ruby:2.4-node # ...with this image as the primary container; this is where all `steps` will run
         environment: # environment variables for primary container
@@ -10,7 +10,7 @@ jobs: # a collection of steps
           BUNDLE_RETRY: 3
           BUNDLE_PATH: vendor/bundle
           PGHOST: 127.0.0.1
-          PGUSER: quizbot
+          PGUSER: root
           RAILS_ENV: development
       - image: circleci/postgres:9.5-alpine # database image
         environment: # environment variables for database
