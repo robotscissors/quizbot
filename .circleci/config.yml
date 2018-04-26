@@ -45,6 +45,7 @@ jobs: # a collection of steps
     # Database setup
       - run: bundle exec rake db:create
       - run: bundle exec rake db:schema:load
+      - run: bundle exec rake db:seed
       
       - run:
           name: Wait for DB
