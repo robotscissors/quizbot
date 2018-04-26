@@ -1,4 +1,4 @@
-# QuizBot
+# QuizBot [![CircleCI](https://circleci.com/gh/robotscissors/quizbot.svg?style=svg)](https://circleci.com/gh/robotscissors/quizbot)
 
 QuizBot is an application that is lightweight and uses Twillio’s SMS features. It does one thing – it engages users with quizzes. The inspiration for this is marketing. Picture yourself sitting in a waiting room or in an exam room at your doctor’s office. Printed on a poster stuck to the wall, you read “Find out more about your risks of heart disease. Text HEART to xxx-xxx-xxxx to test your knowledge about heart disease.”
 
