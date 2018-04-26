@@ -11,7 +11,7 @@ jobs: # a collection of steps
           BUNDLE_PATH: vendor/bundle
           PGHOST: 127.0.0.1
           PGUSER: quizbot
-          RAILS_ENV: test
+          RAILS_ENV: development
       - image: circleci/postgres:9.5-alpine # database image
         environment: # environment variables for database
           POSTGRES_USER: christopherbazin
