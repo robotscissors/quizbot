@@ -13,4 +13,5 @@ gem 'rake', '~> 0.9'
 group :development do
   gem 'rspec', '~> 3.5'
   gem 'rack-test'
+  gem 'rspec_junit_formatter'
 end
