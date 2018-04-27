@@ -45,6 +45,8 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.0)
+    rspec_junit_formatter (0.3.0)
+      rspec-core (>= 2, < 4, != 2.12.0)
     sinatra (2.0.1)
       mustermann (~> 1.0)
       rack (~> 2.0)
@@ -82,6 +84,7 @@ DEPENDENCIES
   rack-test
   rake (~> 0.9)
   rspec (~> 3.5)
+  rspec_junit_formatter
   sinatra (~> 2.0, >= 2.0.1)
   sinatra-activerecord
   sinatra-config-file (~> 1.0)
