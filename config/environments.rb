@@ -1,4 +1,4 @@
-configure :production, :develoment, :test do
+configure :production, :develoment do
   db = URI.parse(ENV['DATABASE_URL'] || 'postgres://localhost/mydb')
 
   ActiveRecord::Base.establish_connection(

@@ -5,7 +5,7 @@ development:
   password: <%= ENV['PG_PASS'] %>
   host: localhost
 
-test:
+production:
     adapter: postgresql
     database: test
     username: <%= ENV['PG_USER'] %>
