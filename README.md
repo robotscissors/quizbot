@@ -138,7 +138,7 @@ All of the quiz information is contained in the ```seeds.db``` file located in t
     Question.create(
       detail: "You can catch the flu from the vaccine. (Reply T or F)",
       answer: "F",
-      answer_description: "The flu vaccine that a person receives is an inactive virus that cannot be transmitted. Those that                             feel symptoms were already infected.",
+      answer_description: "The flu vaccine that a person receives is an inactive virus that cannot be transmitted. Those that feel symptoms were already infected.",
       more_info: "https://www.health.harvard.edu/diseases-and-conditions/10-flu-myths",
       topic_id: @topic1.id
     )
