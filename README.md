@@ -88,15 +88,20 @@ From your TWILIO account:
 <img width="650" alt="screen shot 2018-05-01 at 12 15 20 pm" src="https://user-images.githubusercontent.com/24664863/39489333-f4e425d6-4d39-11e8-843d-15d0006f1b8f.png">
 
 
-Remember the URL will be different based on your NGROK settings or the webserver in your production environment.
+Remember the URL will be different based on your ```ngrok``` settings or the webserver in your production environment.
 
 
 ## Send Your First Text
 
 Go ahead now with ```ngrok``` and your application running send keyword ```Flu``` to your Twilio phone number and you should get a response like the one below.
 
-  <img width="200" alt="screen shot 2018-05-01 at 1 32 29 pm" src="https://user-images.githubusercontent.com/24664863/39492347-26829348-4d44-11e8-92d9-164d1b13edab.png">
+<p float="left" valgin="top">
+  <img width="200" alt="screen shot 2018-05-01 at 2 03 50 pm" src="https://user-images.githubusercontent.com/24664863/39493651-84ecdb4c-4d48-11e8-9011-1e709d1be4f6.png">
 
+  <img width="200" alt="screen shot 2018-05-01 at 1 56 35 pm" src="https://user-images.githubusercontent.com/24664863/39493399-8e9ddc0a-4d47-11e8-8771-d3e1db8c1aa7.png"> 
+  
+  <img width="200" alt="screen shot 2018-05-01 at 1 56 55 pm" src="https://user-images.githubusercontent.com/24664863/39493447-b7de1aa8-4d47-11e8-9e73-93dfbb5fffa3.png">
+</p>
 
 
 ## Customization
