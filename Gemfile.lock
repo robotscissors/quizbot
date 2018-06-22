@@ -85,7 +85,7 @@ DEPENDENCIES
   rake (~> 0.9)
   rspec (~> 3.5)
   rspec_junit_formatter
-  sinatra (~> 2.0, >= 2.0.1)
+  sinatra (~> 2.0.2)
   sinatra-activerecord
   sinatra-config-file (~> 1.0)
   twilio-ruby (~> 4.11, >= 4.11.1)
